@@ -42,6 +42,8 @@ namespace SpeechRecognitionVosk
                 PropertyNameCaseInsensitive = true,
             };
 
+            // 入力ファイルはたいていの動画から下記のコマンドで変換できる
+            // ffmpeg -hide_banner -i test.mp4 -ar 16000 -ac 1 -f s16le test.wav
             using (var source = File.OpenRead("test.wav"))
             {
                 byte[] buffer = new byte[4096];
