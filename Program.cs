@@ -22,6 +22,13 @@ namespace SpeechRecognitionVosk
 
     class Program
     {
+        static string SecondsToString(double seconds)
+        {
+            long tick = (long)(seconds * 1000 * 1000 * 10); // 100-nanosecond units
+            var timespan = new TimeSpan(tick);
+            return $"{timespan.Hours:D2}:{timespan.Minutes:D2}:{timespan.Seconds:D2}.{timespan.Milliseconds:D3}";
+        }
+
         public static void DemoBytes(Model model)
         {
             // Demo byte buffer
@@ -44,14 +51,19 @@ namespace SpeechRecognitionVosk
                     if (rec.AcceptWaveform(buffer, bytesRead))
                     {
                         string result = rec.Result();
-                        Console.WriteLine(result);
+                        // Console.WriteLine(result);
 
                         var json = JsonSerializer.Deserialize<RecognitionResult>(result, options);
-                        Console.WriteLine(json.Text);
+                        if (json.Result != null && json.Result.Length >= 1)
+                        {
+                            var timestamp = SecondsToString(json.Result[0].Start);
+                            var text = json.Text.Replace(" ", "");
+                            Console.WriteLine($"{timestamp}: {text}");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine(rec.PartialResult());
+                        // Console.WriteLine(rec.PartialResult());
                     }
                 }
             }
